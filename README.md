@@ -1,4 +1,7 @@
-# ftp-rsync-relay
+# [ftp-rsync-relay](https://github.com/hueNET-llc/ftp-rsync-relay)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/huenet-llc/ftp-rsync-relay/master.yml?branch=master)](https://github.com/hueNET-llc/ftp-rsync-relay/actions/workflows/master.yml)
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/rafaelwastaken/ftp-rsync-relay)](https://hub.docker.com/r/rafaelwastaken/ftp-rsync-relay)
+
 A simple FTP to rsync relay
 
 ## Features
