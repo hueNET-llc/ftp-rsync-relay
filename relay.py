@@ -93,11 +93,14 @@ def process_queue():
                     destination_path=f'{os.environ["RSYNC_DESTINATION"]}{destination_path}'
                 )
                 if result == 0:
-                    # rsync succeeded, delete the local file
-                    try:
-                        os.remove(file_path)
-                    except Exception as e:
-                        log.warning(f'rsync succeeded without file deletion: {file_path}: {e}')
+                    if bool(os.environ.get('DELETE_AFTER_RSYNC', True)):
+                        # rsync succeeded, delete the local file
+                        try:
+                            os.remove(file_path)
+                        except Exception as e:
+                            log.warning(f'rsync succeeded without file deletion: {file_path}: {e}')
+                        else:
+                            log.info(f'rsync succeeded: {file_path}')
                     else:
                         log.info(f'rsync succeeded: {file_path}')
                     break
@@ -107,9 +110,9 @@ def process_queue():
                 log.exception(f'rsync failed: {file_path}')
             finally:
                 # If we got here, rsync failed. Wait 5 seconds and try again.
-                time.sleep(5)
+                time.sleep(int(os.environ.get('RSYNC_RETRY_INTERVAL', 5)))
 
-def process_existing_files():
+def _process_existing_files():
     """
     Process all existing files in the FTP_HOME directory
     """
@@ -122,8 +125,9 @@ def process_existing_files():
 def main():
     # Setup logging
     _setup_logging()
-    # Process existing files
-    process_existing_files()
+    if bool(os.environ.get('PROCESS_EXISTING_FILES', True)):
+        # Process existing files
+        _process_existing_files()
     authorizer = DummyAuthorizer()
     authorizer.add_user(
         username=os.environ['FTP_USER'],
